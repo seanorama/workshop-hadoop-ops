@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# Description: bash functions for tenant onboarding
+# Author: Sean Roberts, and anyone else who pulls into github
+
+#set -o errexit
+#set -o pipefail
+#set -o nounset
+# set -o xtrace
+
+# Set magic variables for current file & dir
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__root="$(cd "$(dirname "${__dir}")" && pwd)" # <-- change this
+__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+__base="$(basename ${__file} .sh)"
+
+# variables
+tenant="${tenant:-serenity}"
+tenant_description="${tenant_description:-Cowboys in space}"
+tenant_status="${tenant_status:-enabled}" # The status is used to identify if the tenant is active, decommissioned, or paused for steady state, and provisioning, decommissioning, pausing, or error for transitioning states.  
+tenant_users=(${tenant_users:-malcolm zoe wash) ## list of users or groups that make up the tenant})
+tenant_components=(${tenant_components:-HDFS YARN HIVE HBASE STORM KNOX})
+tenant_hdfs_path=${tenant_hdfs_path:-/tenant/${tenant}}
+tenant_hdfs_permissions=
+tenant_hdfs_quota_files=
+tenant_hdfs_quota_space_raw=
+tenant_hdfs_quota_space_replicated=
+tenant_hdfs_snapshots=
+tenant_hdfs_storage_type=
+
+# hdfs functions
+get_hdfs_superuser() {
+  local hdfs_superuser=''
+  if (id -u hdfs >& /dev/null); then
+    hdfs_superuser='hdfs'
+  elif (id -u hadoop >& /dev/null); then
+    hdfs_superuser='hadoop'
+  else
+    echo 'Cannot find HDFS superuser.'
+    exit 1
+  fi
+  echo ${hdfs_superuser}
+}
+
+hdfs_user_dirs_create_all() {
+  local hdfs_superuser=$(get_hdfs_superuser)
+  local dfs_cmd="sudo -i -u ${hdfs_superuser} hadoop fs"
+  echo "Setting up HDFS /tmp directories."
+  if ! ${dfs_cmd} -stat /tmp ; then
+    ${dfs_cmd} -mkdir -p /tmp/hadoop-yarn/history
+    ${dfs_cmd} -mkdir -p /tmp/hadoop-yarn/staging
+  fi
+  ${dfs_cmd} -chmod -R 1777 /tmp
+
+  for USER in $(getent passwd | grep '/home' | cut -d ':' -f 1); do
+    if ! ${dfs_cmd} -stat /user/${USER}; then
+      echo "Creating HDFS directory for user '${USER}'"
+      ${dfs_cmd} -mkdir -p "/user/${USER}"
+      ${dfs_cmd} -chown "${USER}" "/user/${USER}"
+    fi
+  done
+}
+
+hdfs_tenant_create() {
+  local tenant=${1}
+  local hdfs_superuser="$(get_hdfs_superuser)"
+  local dfs_cmd="sudo -i -u ${hdfs_superuser} hadoop fs"
+  if addgroup "${tenant}"; then
+    if ! ${dfs_cmd} -stat /tenant/${1}; then
+      echo "Creating HDFS directory for tenant '${tenant}'"
+      ${dfs_cmd} -mkdir -p "/tenant/${tenant}"
+      # todo set permissions
+      ${dfs_cmd} -chgrp "${tenant}" "/tenant/${tenant}"
+    else
+      echo "HDFS directory for ${tenant} already exists at /tenant/${tenant}"
+    fi
+  fi
+}
+
+hdfs_user_create_dir() {
+  local user=${1}
+  local hdfs_superuser="$(get_hdfs_superuser)"
+  local dfs_cmd="sudo -i -u ${hdfs_superuser} hadoop fs"
+  if id -u "${1}"; then
+    if ! ${dfs_cmd} -stat /user/${1}; then
+      echo "Creating HDFS directory for user '${user}'"
+      ${dfs_cmd} -mkdir -p "/user/${user}"
+      ${dfs_cmd} -chown "${user}" "/user/${user}"
+    else
+      echo "HDFS directory for ${user} already exists at /user/${user}"
+    fi
+  else
+    echo "User ${user} does not exist on the system."
+  fi
+}
+
+
+export hdfs_superuser="$(get_hdfs_superuser)"
+export dfs_cmd="sudo -i -u ${hdfs_superuser} hadoop fs"
+
+
+#initialize_hdfs_dirs
+#tenant_onboard yarn
