@@ -3,10 +3,11 @@ Hadoop Operations best practices
 
 This repository will be used as a collection point for anything relating to operating Hadoop.
 
-The initial content came from the Hortonworks Workshop of the save name:
+Starting 1st with the Hortonworks Workshop:
 
- - [recording of the presentation on brighttalk](https://www.brighttalk.com/webcast/9573/140277) [<img src="http://i.imgur.com/rXK8zQf.png" width="320px" />](https://www.brighttalk.com/webcast/9573/140277)
- - [slides](./workshop-slides.pdf)
+ - [Workshop slides](./workshop-slides.pdf)
+ - [Workshop recording, on brighttalk](https://www.brighttalk.com/webcast/9573/140277)
+   - [<img src="http://i.imgur.com/rXK8zQf.png" width="320px" />](https://www.brighttalk.com/webcast/9573/140277)
 
 Content to follow shortly:
 
