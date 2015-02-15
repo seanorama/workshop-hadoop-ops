@@ -5,7 +5,7 @@ This repository will be used as a collection point for anything relating to oper
 
 The initial content came from the Hortonworks Workshop of the save name:
 
- - [recording of the presentation on brighttalk](https://www.brighttalk.com/webcast/9573/140277)
+ - [recording of the presentation on brighttalk](https://www.brighttalk.com/webcast/9573/140277) [<img src="http://i.imgur.com/rXK8zQf.png" width="320px" />](https://www.brighttalk.com/webcast/9573/140277)
  - [slides](./workshop-slides.pdf)
 
 Content to follow shortly:
