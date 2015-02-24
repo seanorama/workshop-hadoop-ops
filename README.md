@@ -5,12 +5,12 @@ This repository will be used as a collection point for anything relating to oper
 
 _Note that all content is built/tested around Hortonworks Data Platform (HDP) but should translate to any distribution which is compliant with the open-source Apache components as HDP is built directly off of them._
 
-Getting started
+The beginning
 ----
 
-The Hortonworks Workshop _(that started this work)_:
+This started with the Hortonworks Operations workshop. You can find other workshops at: http://hortonworks.com/partners/learn
 
- - [Workshop slides](./workshop-slides.pdf)
+ - [Workshop slides](http://www.slideshare.net/hortonworks/ops-workshop-asrunon20150112)
  - [Workshop recording, on brighttalk](https://www.brighttalk.com/webcast/9573/140277)
    - [<img src="http://i.imgur.com/rXK8zQf.png" width="320px" />](https://www.brighttalk.com/webcast/9573/140277)
 
